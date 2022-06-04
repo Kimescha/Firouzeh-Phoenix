@@ -1,0 +1,21 @@
+0- Install python 3.8
+1- Update Chrome
+2- Download chromedriver matches Chrome version: https://sites.google.com/a/chromium.org/chromedriver/downloads
+3- add chromedriver path to PATH
+4- add chrome to PATH
+5- Create a new Profile in Chrome
+6- In new profile chrome go to: chrome://version
+7- Find "Profile Path" in the page; it should be sth like:
+        C:\Users\<USERNAME>\AppData\Local\Google\Chrome\User Data\Profile 1
+
+        split this into directory and profile name like this:
+
+        dir:  C:\Users\<USERNAME>\AppData\Local\Google\Chrome\User Data\
+        profile name (the last section): Profile 1
+
+        and add two Environmental Variables:
+        CHROME_PROFILE_DIR      ->    C:\Users\<USERNAME>\AppData\Local\Google\Chrome\User Data\
+        CHROME_PROFILE          ->    Profile 1
+
+8- install webview2 runtime: https://developer.microsoft.com/en-us/microsoft-edge/webview2/
+9- install py requirements: pip install requirements.txt

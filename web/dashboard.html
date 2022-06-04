@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <title>Hello, world!</title>
+    <style>
+    </style>
+</head>
+<body>
+
+<nav class="container navbar navbar-expand-lg navbar-light bg-light"
+     style="border-bottom: 1px solid #888888; margin-bottom: 15px;">
+    <div class="navbar-brand">Firouzex</div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <div class="nav-link"> Market Status: <span id="marketStatus"></span></div>
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-text me-auto">
+        <label for="intervalResume" class="form-check-label">Monitoring:</label>
+        <input
+                data-toggle="toggle"
+                data-height="25"
+                id="intervalResume"
+                data-on="On" data-off="Off"
+                data-onstyle="success" data-offstyle="danger"
+                type="checkbox">
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row" style="margin-bottom: 20px;" id="initRow">
+        <div class="col">
+        </div>
+        <div class="col">
+            <div class="card-body text-center">
+                <h5 class="card-title">Connect</h5>
+                <br>
+                Please click here to open the browser, then login to Firouzex.
+                <br>
+                <br>
+                <div class="btn btn-primary" id="openBrowser">
+                    Open Browser
+                </div>
+                <br>
+                <br>
+                <br>
+                Then click on "Init Broker" to initialize the broker.
+                <br>
+                <br>
+                <div class="btn btn-primary" id="initSelenium">
+                    Init Broker
+                </div>
+            </div>
+        </div>
+        <div class="col">
+
+        </div>
+    </div>
+
+    <div class="row" id="firstRow">
+        <div class="col">
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Default Parameters</h5>
+                    <form>
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-text col-3">Sell</div>
+                                <input type="text" class="form-control form col-2" id="defaultSellMargin"
+                                       placeholder="1">
+                                <div class="input-group-text col">% Higher Than Avg. Buy</div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="input-group">
+                                <div class="input-group-text col-4 " style="white-space: initial;">Sell At Least</div>
+                                <input type="text" class="form-control form col-2" id="minSellMargin" placeholder="0.3">
+                                <div class="input-group-text col">% Higher Than Avg. Buy</div>
+                            </div>
+                        </div>
+                    </form>
+                    <button class="btn btn-primary mt-2" id="setDefaultParameters">Set</button>
+                </div>
+            </div>
+            <div class="card mt-4" id="buyCard">
+                <div class="card-body">
+                    <h5 class="card-title">Add Buy Order</h5>
+                    <form id="buyForm">
+                        <div class="mb-3">
+                            <label for="buyStockName" class="form-label">Stock Name</label>
+                            <input type="text" class="form-control" id="buyStockName" value="فیروزه">
+                            <div id="yesterdayFinalPrice" class="form-text hide"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="buyAmount" class="form-label">Amount</label>
+                            <input type="text" class="form-control" id="buyAmount" value="1">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <label for="buyXMargin" class="form-label form-check-inline">
+                                    <input checked
+                                           data-toggle="toggle"
+                                           id="buyPriceToggle"
+                                           data-on="Margin%" data-off="Price"
+                                           data-onstyle="primary" data-offstyle="primary"
+                                           type="checkbox">
+                                </label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="buyXMargin" value="1">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" id="buySubmit">
+                            <span class="spinner spinner-border spinner-border-sm d-none" role="status"
+                                  aria-hidden="true"></span>
+                            Submit!
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Portfolio</h5>
+                    <table class="table" id="portfolio">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Avg Buy Price</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Active Buy Orders</h5>
+                    <table class="table" id="activeBuyOrders">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Top P.</th>
+                            <th scope="col">Yes. F.</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Active Sell Orders</h5>
+                    <table class="table" id="activeSellOrders">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Top P.</th>
+                            <th scope="col">Yes. F.</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Stocks to Sell</h5>
+                    <table class="table" id="sellStock">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Delete?</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td>
+                                <input class="input-group form-control" id="sellStockNameInput" type="text"
+                                       placeholder="شستا">
+                            </td>
+                            <td>
+                                <button class="btn btn-success btn-sm" id="addSellStock">+</button>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal" id="buyConfModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Buy Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3 row">
+                        <label for="buyConfStockName" class="col-sm-4 col-form-label">Stock Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" readonly class="form-control-plaintext" id="buyConfStockName" value="">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+
+                        <label for="buyConfQuantity" class="col-sm-4 col-form-label">Amount</label>
+                        <div class="col-sm-8">
+                            <input type="text" readonly class="form-control-plaintext" id="buyConfQuantity" value="">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+
+                        <label for="buyConfPrice" class="col-sm-4 col-form-label">Price</label>
+                        <div class="col-sm-8">
+                            <input type="text" readonly class="form-control-plaintext" id="buyConfPrice" value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="buyConfBtn">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="errorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">An Error Occurred</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" role="alert" id="errorText">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="successModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Successful</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success" role="alert" id="successText">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+<script>
+    $("#test").on('click', function (e) {
+        pywebview.api.TEST().then(function (response) {
+            printResp(response);
+        });
+    });
+
+    let brokerTimeBegin = new Date();
+    let brokerTimeEnd = new Date();
+
+    let intervalResume = 0;
+    let intervalBegan = 0;
+    let reqToEnableActions = 0;
+
+    let marketStatus = 0;
+
+    setInterval(function () {
+        brokerTimeBegin.setHours(9, 0, 0);
+        brokerTimeEnd.setHours(13, 30, 0); // TODO
+        let now = new Date();
+        if (now > brokerTimeBegin && now < brokerTimeEnd) {
+            marketStatus = 1;
+            $("#marketStatus").html('Open');
+        } else {
+            marketStatus = 0;
+            $("#marketStatus").html('Close');
+        }
+    }, 500);
+
+    function printResp(response) {
+        console.log(JSON.stringify(response));
+    }
+
+    function disableActions() {
+        $("#buySubmit").attr('disabled', 'disabled');
+        $("#setDefaultParameters").attr('disabled', 'disabled');
+        $("#addSellStock").attr('disabled', 'disabled');
+        $(".removeSellStock").attr('disabled', 'disabled');
+
+    }
+
+    function enableActions() {
+        $("#buySubmit").removeAttr('disabled');
+        $("#setDefaultParameters").removeAttr('disabled');
+        $("#addSellStock").removeAttr('disabled');
+        $(".removeSellStock").removeAttr('disabled');
+
+    }
+
+    function disableIntervalToggle() {
+        $("#intervalResume").attr('disabled', 'disabled');
+    }
+
+    function enableIntervalToggle() {
+        $("#intervalResume").removeAttr('disabled');
+    }
+
+    function printActiveBuyOrders(buyOrders) {
+        let data = buyOrders;
+        let tbody = $("#activeBuyOrders tbody");
+        let newTbody = "";
+        for (i = 0; i < data.length; i++) {
+            newTbody += "<tr>" +
+                "<td>" + data[i].name + "</td>" +
+                "<td>" + data[i].amount + "</td>" +
+                "<td>" + data[i].price + "</td>" +
+                "<td>" + data[i].top + "</td>" +
+                "<td>" + data[i].yesterday + "</td>" +
+                "</tr>";
+        }
+        tbody.html(newTbody);
+    }
+
+    function printPortfolio(portfolio) {
+        let data = portfolio;
+        let tbody = $("#portfolio tbody");
+        let newTbody = "";
+        for (i = 0; i < data.length; i++) {
+            newTbody += "<tr>" +
+                "<td>" + data[i].name + "</td>" +
+                "<td>" + data[i].amount + "</td>" +
+                "<td>" + data[i].avgBuyPrice + "</td>" +
+                "</tr>";
+        }
+        tbody.html(newTbody);
+    }
+
+    function printActiveSellOrders(sellOrders) {
+        let data = sellOrders;
+        let tbody = $("#activeSellOrders tbody");
+        let newTbody = "";
+        for (i = 0; i < data.length; i++) {
+            newTbody += "<tr>" +
+                "<td>" + data[i].name + "</td>" +
+                "<td>" + data[i].amount + "</td>" +
+                "<td>" + data[i].price + "</td>" +
+                "<td>" + data[i].top + "</td>" +
+                "<td>" + data[i].yesterday + "</td>" +
+                "</tr>";
+        }
+        tbody.html(newTbody);
+    }
+
+    // sync orders and portfolio
+    function getAll(controlButtons = false) {
+        if (controlButtons) {
+            disableIntervalToggle();
+            disableActions();
+        }
+        pywebview.api.getAll().then(function (response) {
+            printResp(response);
+            if (response.code === 1) {
+                buyOrders = response.result.buy;
+                sellOrders = response.result.sell;
+                portfolio = response.result.portfolio;
+
+                printActiveBuyOrders(buyOrders);
+                printActiveSellOrders(sellOrders);
+                printPortfolio(portfolio);
+            } else {
+            }
+            if (controlButtons) {
+                enableIntervalToggle();
+                enableActions();
+            }
+        });
+
+    }
+
+    function updateStocksToSell(){
+        let stocksToSell = [];
+        $.each($(".sellStockName"),function(key, value){
+            stocksToSell.push(value.innerText);
+        });
+        pywebview.api.stocksToSell(stocksToSell).then(function (response) {
+                printResp(response);
+        });
+    }
+    $(document).on('click',".removeSellStock", function (e) {
+        console.log($(this));
+        $(this).parent().parent().remove();
+        updateStocksToSell();
+    });
+
+    $("#addSellStock").on('click', function (e) {
+        let stockName = $("#sellStockNameInput").val();
+        let template = `<tr> <td class="sellStockName">${stockName}</td><td><button class='removeSellStock btn btn-danger btn-sm'><i class='bi bi-trash'></i></button></td>`;
+        $("#sellStock tbody").append(template);
+        updateStocksToSell();
+    });
+
+    window.addEventListener('pywebviewready', function () {
+
+        $("#firstRow").hide();
+
+        let buyConfModal = new bootstrap.Modal(document.getElementById('buyConfModal'), {});
+        let errorModal = new bootstrap.Modal(document.getElementById('errorModal'), {});
+        let successModal = new bootstrap.Modal(document.getElementById('successModal'), {});
+
+        $('#buyPriceToggle').bootstrapToggle();
+        $('#intervalResume')
+            .bootstrapToggle()
+            .on('change', function () {
+                if ($(this).prop('checked') === true) {
+                    disableActions();
+                    intervalResume = 1;
+                } else {
+                    if (intervalBegan === 0) {
+                        enableActions();
+                        intervalResume = 0;
+                    } else {
+                        intervalResume = 0;
+                        reqToEnableActions = 1;
+                    }
+                }
+            });
+
+        let interval = setInterval(function () {
+            if (intervalResume && marketStatus && !intervalBegan) {
+                intervalBegan = 1;
+                console.log("begin");
+
+                pywebview.api.intervalCB().then(function (response) {
+                    printResp(response);
+
+                    let buyOrders = response.result.buy;
+                    let sellOrders = response.result.sell;
+                    let portfolio = response.result.portfolio;
+
+                    printActiveBuyOrders(buyOrders);
+                    printActiveSellOrders(sellOrders);
+                    printPortfolio(portfolio);
+
+                    intervalBegan = 0;
+                    if (reqToEnableActions === 1) {
+                        enableActions();
+                        reqToEnableActions = 0;
+                    }
+                    console.log('end');
+                });
+            }
+        }, 1000);
+
+
+        $('#openBrowser').on('click', function (e) {
+            pywebview.api.openBrowser().then(printResp);
+        });
+        $('#initSelenium').on('click', function (e) {
+            pywebview.api.initSelenium().then(function (response) {
+                console.log(JSON.stringify(response));
+                if (response.code === 1) {
+                    $("#initRow").hide();
+                    $("#firstRow").show();
+
+                    getAll(true);
+                }
+            });
+        });
+
+
+        $('#buyStockName').on('keyup', function (e) {
+            let name = $('#buyStockName').val();
+            disableIntervalToggle();
+            disableActions();
+            pywebview.api.getYesterdayFinalPrice(name).then(function (response) {
+                printResp(response);
+                let finalPriceDiv = $("#yesterdayFinalPrice");
+                if (response.code === 1) {
+                    finalPriceDiv.html(
+                        "Yesterday's final price is: " +
+                        response.price
+                    );
+                    finalPriceDiv.show();
+                } else {
+                    finalPriceDiv.html(
+                        "Stock Not Found!"
+                    );
+                }
+                enableIntervalToggle();
+                enableActions();
+            });
+        });
+
+        $("#setDefaultParameters").on('click', function (e) {
+            let defaultSellMargin = $('#defaultSellMargin').val();
+            if (defaultSellMargin === '')
+                defaultSellMargin = 1;
+
+            let minSellMargin = $('#minSellMargin').val();
+            if (minSellMargin === '')
+                minSellMargin = 0.3;
+
+            pywebview.api.setDefaultParameters(defaultSellMargin, minSellMargin).then(function (response) {
+                printResp(response);
+            });
+        });
+
+        $('#buySubmit').on('click', function (e) {
+            $('#buySubmit .spinner').removeClass('d-none');
+            $('#buySubmit').prop('disabled', true);
+            disableIntervalToggle();
+
+            let name = $('#buyStockName').val();
+            let amount = $('#buyAmount').val();
+            let xMargin = $('#buyXMargin').val();
+            let price = $('#buyXMargin').val();
+
+            if ($("#buyPriceToggle").prop('checked') === true) {
+                price = -1;
+            } else {
+                xMargin = -1;
+            }
+
+            pywebview.api.addBuy(name, amount, xMargin, price).then(function (response) {
+                printResp(response);
+                if (response.code === 1) {
+                    $("#buyConfStockName").val(response.values.name);
+                    $("#buyConfQuantity").val(response.values.amount);
+                    $("#buyConfPrice").val(response.values.price);
+
+                    buyConfModal.show();
+
+                    $('#buySubmit .spinner').addClass('d-none')
+                    $('#buySubmit').removeAttr('disabled');
+                } else {
+                    $('#buySubmit .spinner').addClass('d-none')
+                    $('#buySubmit').removeAttr('disabled');
+
+                    $("#errorModal #errorText").html("Fill All Fields Properly!");
+                    errorModal.show();
+                    enableIntervalToggle();
+                }
+            });
+        });
+
+        $("#buyConfBtn").on('click', function (e) {
+            pywebview.api.addBuyConfirm().then(function (response) {
+                printResp(response);
+                if (response.code === 1) {
+                    buyConfModal.hide();
+                    $("#successModal #successText").html("The order has been submitted successfully!");
+                    successModal.show();
+                    getAll(true);
+                } else {
+                    buyConfModal.hide();
+                    $("#errorModal #errorText").html(response.message);
+                    errorModal.show();
+                }
+                enableIntervalToggle();
+            })
+        });
+
+
+    });
+</script>
+</body>
+</html>
